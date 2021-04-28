@@ -4,11 +4,14 @@
 
 import sys
 import pytorch_lightning as pl
-from vit import Classifier
 
+# Custom
+from models.vit import Classifier
 from config import get_args
 from dataloaders import get_dataloaders
 
+
+# Trainer
 def get_trainer(args):
     if args.mode == 'train':
         trainer = pl.Trainer(gpus=1, max_epochs=args.epochs)
@@ -23,6 +26,11 @@ def get_trainer(args):
         raise Exception(f'Mode "{args.mode}" not supported.')
 
     return trainer
+
+
+##################################################
+# Main
+##################################################
 
 def main(args):
 

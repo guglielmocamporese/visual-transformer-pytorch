@@ -7,7 +7,8 @@ from torchvision import transforms
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 
-# Dataset
+
+# Get datasets
 def get_datasets(args):
     ds_args = {
         'root': './data',
@@ -24,10 +25,13 @@ def get_datasets(args):
     }
     return dss
 
-# Dataloaders
+# Get dataloaders
 def get_dataloaders(args):
+
+    # Datasets
     dss = get_datasets(args)
 
+    # Dataloaders
     dl_args = {
         'batch_size': args.batch_size,
         'pin_memory': True,
