@@ -37,7 +37,7 @@ class ViTransformerEncoderLayer(nn.Module):
     An Image is Worth 16x16 Words: Transformers for Image Recognition At Scale, Dosovitskiy et al, 2020.
     https://arxiv.org/pdf/2010.11929.pdf
     """
-    def __init__(self, h_dim, num_heads, d_ff=2048):
+    def __init__(self, h_dim, num_heads, d_ff=2048, dropout=0.0):
         super(ViTransformerEncoderLayer, self).__init__()
         self.norm1 = nn.LayerNorm(h_dim)
         self.mha = MultiHeadAttention(h_dim, num_heads)
@@ -45,6 +45,7 @@ class ViTransformerEncoderLayer(nn.Module):
         self.ffn = nn.Sequential(
             nn.Linear(h_dim, d_ff),
             nn.GELU(),
+            nn.Dropout(dropout),
             nn.Linear(d_ff, h_dim)
         )
 
@@ -66,16 +67,17 @@ class ViTransformerEncoder(nn.Module):
     https://arxiv.org/pdf/2010.11929.pdf
     """
     def __init__(self, num_layers, h_dim, num_heads, d_ff=2048, 
-                 max_time_steps=None, use_clf_token=False):
+                 max_time_steps=None, use_clf_token=False, dropout=0.0, dropout_emb=0.0):
         super(ViTransformerEncoder, self).__init__()
         self.layers = nn.ModuleList([
-            ViTransformerEncoderLayer(h_dim, num_heads, d_ff=2048) 
+            ViTransformerEncoderLayer(h_dim, num_heads, d_ff=d_ff, dropout=dropout) 
             for _ in range(num_layers)
         ])
         self.pos_emb = nn.Embedding(max_time_steps, h_dim)
         self.use_clf_token = use_clf_token
         if self.use_clf_token:
             self.clf_token = nn.Parameter(torch.randn(1, h_dim))
+        self.dropout_emb = nn.Dropout(dropout_emb)
 
     def forward(self, x, mask=None):
         if self.use_clf_token:
@@ -85,6 +87,7 @@ class ViTransformerEncoder(nn.Module):
                 raise Exception('Error. clf_token with mask is not supported.')
         embs = self.pos_emb.weight[:x.shape[1]]
         x += embs
+        x = self.dropout_emb(x)
         for layer in self.layers:
             x = layer(x, mask=mask)
         return x
@@ -100,7 +103,7 @@ class ViT(nn.Module):
     https://arxiv.org/pdf/2010.11929.pdf
     """
     def __init__(self, patch_size, num_layers, h_dim, num_heads, num_classes, 
-                 d_ff=2048, max_time_steps=None, use_clf_token=True):
+                 d_ff=2048, max_time_steps=None, use_clf_token=True, dropout=0.0, dropout_emb=0.0):
         super(ViT, self).__init__()
         self.proc = nn.Sequential(
             nn.Unfold((patch_size, patch_size), 
@@ -111,7 +114,7 @@ class ViT(nn.Module):
         self.enc = ViTransformerEncoder(num_layers, h_dim, num_heads, 
                                          d_ff=d_ff, 
                                          max_time_steps=max_time_steps, 
-                                         use_clf_token=use_clf_token)
+                                         use_clf_token=use_clf_token, dropout=dropout, dropout_emb=dropout_emb)
         self.mlp = nn.Linear(h_dim, num_classes)
 
     def forward(self, x):
@@ -133,6 +136,8 @@ def get_vit(args):
         'd_ff': _MODELS_CONFIG[args.model]['d_ff'], 
         'max_time_steps': args.max_time_steps, 
         'use_clf_token': args.use_clf_token,
+        'dropout': args.dropout,
+        'dropout_emb': args.dropout_emb,
     }
     model = ViT(**model_args)
     if len(args.model_checkpoint) > 0:
@@ -168,4 +173,4 @@ class Classifier(pl.LightningModule):
         return self.training_step(batch, batch_idx, part='val')
 
     def configure_optimizers(self):
-        return Adam(self.parameters(), self.args.lr)
+        return Adam(self.parameters(), self.args.lr, weight_decay=0.005)

@@ -20,9 +20,11 @@ def get_args(stdin):
     parser.add_argument('--num_workers', type=int, default=4, help='The number of workers.')
     parser.add_argument('--model_checkpoint', type=str, default='', help='The model checkpoint path.')
     parser.add_argument('--epochs', type=int, default=100, help='The number of epochs for the training.')
-    parser.add_argument('--lr', type=float, default=3e-4, help='The learning rate.')
+    parser.add_argument('--lr', type=float, default=3e-3, help='The learning rate.')
     parser.add_argument('--mode', type=str, default='validation', help='The mode of the experiment, in "train", "validation" or "test".')
     parser.add_argument('--model', type=str, default='vit-base', help='The model architecture, in "vit-base", "vit-large", "vit-huge".')
+    parser.add_argument('--dropout', type=float, default=0.1, help='The dropout rate.')
+    parser.add_argument('--dropout_emb', type=float, default=0.1, help='The dropout rate after the positional embedding.')
     args = parser.parse_args()
 
     args.__class__.__repr__ = lambda x: 'Input args: ' + json.dumps(x.__dict__, indent=4)
