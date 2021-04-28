@@ -49,6 +49,15 @@ class Head(nn.Module):
     """
     Attention is all you need, Vaswani et al, 2017.
     https://arxiv.org/abs/1706.03762
+
+    ::
+             Linear proj.     Linear proj.     Linear proj.
+               (query: q)       (key: k)        (value: v)
+                  ↓                ↓                ↓
+                   --------        |        --------
+                           ↓       ↓       ↓
+                          Attention (q, k, v)
+
     """
     def __init__(self, h_dim):
         super(Head, self).__init__()
@@ -76,6 +85,14 @@ class MultiHeadAttention(nn.Module):
     """
     Attention is all you need, Vaswani et al, 2017.
     https://arxiv.org/abs/1706.03762
+    ::
+
+            [Head_1, Head_2, ..., Head_h]
+                           ↓
+                       Cat (dim=2)
+                           ↓
+            Linear (in=h * h_dim, out=h_dim)
+
     """
     def __init__(self, h_dim, num_heads):
         super(MultiHeadAttention, self).__init__()
