@@ -59,11 +59,11 @@ class Head(nn.Module):
                           Attention (q, k, v)
 
     """
-    def __init__(self, h_dim):
+    def __init__(self, h_dim, head_out_dim):
         super(Head, self).__init__()
-        self.q_lin = nn.Linear(h_dim, h_dim, bias=False)
-        self.k_lin = nn.Linear(h_dim, h_dim, bias=False)
-        self.v_lin = nn.Linear(h_dim, h_dim, bias=False)
+        self.q_lin = nn.Linear(h_dim, head_out_dim, bias=False)
+        self.k_lin = nn.Linear(h_dim, head_out_dim, bias=False)
+        self.v_lin = nn.Linear(h_dim, head_out_dim, bias=False)
 
     def forward(self, q, k=None, v=None, mask=None):
         if k is None:
@@ -99,9 +99,9 @@ class MultiHeadAttention(nn.Module):
         self.h_dim = h_dim
         self.num_heads = num_heads
         self.heads = nn.ModuleList([
-            Head(h_dim) for _ in range(num_heads)
+            Head(h_dim, h_dim // num_heads) for _ in range(num_heads)
         ])
-        self.linear = nn.Linear(h_dim * num_heads, h_dim)
+        self.linear = nn.Linear((h_dim // num_heads) * num_heads, h_dim)
 
     def forward(self, q, k=None, v=None, mask=None):
         x = [head(q, k, v, mask=mask) for head in self.heads]
