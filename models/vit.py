@@ -27,6 +27,10 @@ class Transpose(nn.Module):
 ##################################################
 
 class ViTransformerEncoderLayer(nn.Module):
+    """
+    An Image is Worth 16x16 Words: Transformers for Image Recognition At Scale, Dosovitskiy et al, 2020.
+    https://arxiv.org/pdf/2010.11929.pdf
+    """
     def __init__(self, h_dim, num_heads, d_ff=2048):
         super(ViTransformerEncoderLayer, self).__init__()
         self.norm1 = nn.LayerNorm(h_dim)
@@ -51,6 +55,10 @@ class ViTransformerEncoderLayer(nn.Module):
 ##################################################
 
 class ViTransformerEncoder(nn.Module):
+    """
+    An Image is Worth 16x16 Words: Transformers for Image Recognition At Scale, Dosovitskiy et al, 2020.
+    https://arxiv.org/pdf/2010.11929.pdf
+    """
     def __init__(self, num_layers, h_dim, num_heads, d_ff=2048, 
                  max_time_steps=None, use_clf_token=False):
         super(ViTransformerEncoder, self).__init__()
@@ -81,6 +89,10 @@ class ViTransformerEncoder(nn.Module):
 ##################################################
 
 class ViT(nn.Module):
+    """
+    An Image is Worth 16x16 Words: Transformers for Image Recognition At Scale, Dosovitskiy et al, 2020.
+    https://arxiv.org/pdf/2010.11929.pdf
+    """
     def __init__(self, patch_size, num_layers, h_dim, num_heads, num_classes, 
                  d_ff=2048, max_time_steps=None, use_clf_token=True):
         super(ViT, self).__init__()
