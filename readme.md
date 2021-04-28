@@ -26,3 +26,13 @@ model.eval()
 x = torch.randn(1, 3, 32, 32) # [B, C, H, W]
 logits = vit(x) # [B, N_CL]
 ```
+
+## Model Configurations
+
+From the paper [[link](https://arxiv.org/abs/2010.11929)]:
+
+| Model     | Layers | Hidden Size | MLP Size | Heads | Params | 
+| --------- | ------ | ----------- | -------- | ----- | ------ |
+| ViT-Base  | 12     | 768         | 3072     | 12    | 86 M   |
+| ViT-Large | 24     | 1024        | 4096     | 16    | 307 M  |
+| ViT-Huge  | 32     | 1280        | 1280     | 16    | 632 M  |
