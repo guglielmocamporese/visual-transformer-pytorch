@@ -21,6 +21,12 @@ class Transpose(nn.Module):
     def forward(self, x):
         return x.transpose(self.d0, self.d1)
 
+_MODELS_CONFIG = {
+    'vit-base': {'num_layers': 12, 'h_dim': 768, 'd_ff': 3072, 'num_heads': 12},
+    'vit-large': {'num_layers': 24, 'h_dim': 1024, 'd_ff': 4096, 'num_heads': 16},
+    'vit-huge': {'num_layers': 32, 'h_dim': 1280, 'd_ff': 5120, 'num_heads': 16},
+}
+
 
 ##################################################
 # ViT Transformer Encoder Layer
@@ -120,11 +126,11 @@ class ViT(nn.Module):
 def get_vit(args):
     model_args = {
         'patch_size': args.patch_size, 
-        'num_layers': args.num_layers, 
-        'h_dim': args.h_dim, 
-        'num_heads': args.num_heads, 
+        'num_layers': _MODELS_CONFIG[args.model]['num_layers'],
+        'h_dim': _MODELS_CONFIG[args.model]['h_dim'],
+        'num_heads': _MODELS_CONFIG[args.model]['num_heads'], 
         'num_classes': args.num_classes, 
-        'd_ff': args.d_ff, 
+        'd_ff': _MODELS_CONFIG[args.model]['d_ff'], 
         'max_time_steps': args.max_time_steps, 
         'use_clf_token': args.use_clf_token,
     }
