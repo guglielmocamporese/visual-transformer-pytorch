@@ -1,4 +1,4 @@
-# Implementation of the Visual Transformer (ViT) from scratch
+# Implementation of the Visual Transformer (ViT) from Scratch
 
 ongoing...
 
