@@ -1,3 +1,7 @@
+##################################################
+# Imports
+##################################################
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,6 +10,19 @@ from torch.optim import Adam
 
 from transformer import MultiHeadAttention
 
+# Utils
+class Transpose(nn.Module):
+    def __init__(self, d0, d1): 
+        super(Transpose, self).__init__()
+        self.d0, self.d1 = d0, d1
+
+    def forward(self, x):
+        return x.transpose(self.d0, self.d1)
+
+
+##################################################
+# ViT Transformer Encoder Layer
+##################################################
 
 class ViTransformerEncoderLayer(nn.Module):
     def __init__(self, h_dim, num_heads, d_ff=2048):
@@ -25,6 +42,11 @@ class ViTransformerEncoderLayer(nn.Module):
         x_ = self.norm2(x)
         x = self.ffn(x_) + x
         return x
+
+
+##################################################
+# Vit Transformer Encoder
+##################################################
 
 class ViTransformerEncoder(nn.Module):
     def __init__(self, num_layers, h_dim, num_heads, d_ff=2048, 
@@ -51,13 +73,10 @@ class ViTransformerEncoder(nn.Module):
             x = layer(x, mask=mask)
         return x
 
-class Transpose(nn.Module):
-    def __init__(self, d0, d1): 
-        super(Transpose, self).__init__()
-        self.d0, self.d1 = d0, d1
 
-    def forward(self, x):
-        return x.transpose(self.d0, self.d1)
+##################################################
+# Visual Transformer (ViT)
+##################################################
 
 class ViT(nn.Module):
     def __init__(self, patch_size, num_layers, h_dim, num_heads, num_classes, 
@@ -82,6 +101,7 @@ class ViT(nn.Module):
         x = self.mlp(x)
         return x
 
+
 # Get visual transformer
 def get_vit(args):
     model_args = {
@@ -99,6 +119,11 @@ def get_vit(args):
         model = model.load_from_checkpoint(args.model_checkpoint, **model_args)
         print(f'Model checkpoint loaded from {args.model_checkpoint}')
     return model
+
+
+##################################################
+# Classifier - PyTorchLightning Wrapper for ViT
+##################################################
 
 class Classifier(pl.LightningModule):
     def __init__(self, args):

@@ -1,9 +1,18 @@
+##################################################
+# Imports
+##################################################
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
 import math
 from torch.optim import Adam
+
+
+##################################################
+# Utils
+##################################################
 
 def attention(q, k, v, mask=None):
     """
@@ -31,7 +40,16 @@ def create_causal_mask(size1, size2):
     mask = torch.triu(mask, diagonal=0)
     return mask
 
+
+##################################################
+# Head
+##################################################
+
 class Head(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, h_dim):
         super(Head, self).__init__()
         self.q_lin = nn.Linear(h_dim, h_dim, bias=False)
@@ -49,7 +67,16 @@ class Head(nn.Module):
         x = attention(q, k, v, mask=mask)
         return x
 
+
+##################################################
+# Multi Head Attention
+##################################################
+
 class MultiHeadAttention(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, h_dim, num_heads):
         super(MultiHeadAttention, self).__init__()
         self.h_dim = h_dim
@@ -65,7 +92,16 @@ class MultiHeadAttention(nn.Module):
         x = self.linear(x) # [B, T, h_dim]
         return x
 
+
+##################################################
+# Transformer Encoder Layer
+##################################################
+
 class TransformerEncoderLayer(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, h_dim, num_heads, d_ff=2048):
         super(TransformerEncoderLayer, self).__init__()
         self.mha = MultiHeadAttention(h_dim, num_heads)
@@ -84,7 +120,16 @@ class TransformerEncoderLayer(nn.Module):
         x = self.norm2(x)
         return x
 
+
+##################################################
+# Transformer Encoder
+##################################################
+
 class TransformerEncoder(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, num_layers, h_dim, num_heads, d_ff=2048, 
                  max_time_steps=None, use_clf_token=False):
         super(TransformerEncoder, self).__init__()
@@ -109,7 +154,16 @@ class TransformerEncoder(nn.Module):
             x = layer(x, mask=mask)
         return x
 
+
+##################################################
+# Transformer Decoder Layer
+##################################################
+
 class TransformerDecoderLayer(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, h_dim, num_heads, d_ff=2048):
         super(TransformerDecoderLayer, self).__init__()
         self.mask_mha = MultiHeadAttention(h_dim, num_heads)
@@ -133,7 +187,16 @@ class TransformerDecoderLayer(nn.Module):
         x = self.norm3(x)
         return x
 
+
+##################################################
+# Transformer Decoder
+##################################################
+
 class TransformerDecoder(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, num_layers, h_dim, num_heads, d_ff=2048, 
                  max_time_steps=None):
         super(TransformerDecoder, self).__init__()
@@ -150,7 +213,16 @@ class TransformerDecoder(nn.Module):
             x = layer(x, x_enc)
         return x
 
+
+##################################################
+# Transformer
+##################################################
+
 class Transformer(nn.Module):
+    """
+    Attention is all you need, Vaswani et al, 2017.
+    https://arxiv.org/abs/1706.03762
+    """
     def __init__(self, num_layers_enc, num_layers_dec, h_dim, num_heads, 
                  num_classes, d_ff=2048, max_time_steps_enc=None, 
                  max_time_steps_dec=None):
