@@ -1,4 +1,4 @@
-# Implementation of the Visual Transformer (ViT) from Scratch
+# PyTorch Implementation of the Visual Transformer (ViT) from Scratch
  Reimplementation of the paper: 
  
  "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale", *Dosovitskiy et al*, 2020. 
