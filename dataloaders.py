@@ -16,6 +16,7 @@ def get_datasets(args):
     }
     transform = transforms.ToTensor()
     transform_aug = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
     ])
