@@ -1,7 +1,10 @@
 # Implementation of the Visual Transformer (ViT) from Scratch
-
-ongoing...
-
+ Reimplementation of the paper: 
+ 
+ "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale", *Dosovitskiy et al*, 2020. 
+ 
+ [![arXiv](https://img.shields.io/badge/arXiv-2010.1192-red)](https://arxiv.org/abs/2010.1192)
+ 
 ## Usage
 
 ```python
@@ -36,3 +39,24 @@ From the paper [[link](https://arxiv.org/abs/2010.11929)]:
 | ViT-Base  | 12     | 768         | 3072     | 12    | 86 M   |
 | ViT-Large | 24     | 1024        | 4096     | 16    | 307 M  |
 | ViT-Huge  | 32     | 1280        | 5120     | 16    | 632 M  |
+
+# Train
+
+```sh
+$ python main.py \
+    --mode "train" \
+    --model "vit-base" \
+    --patch_size 8 \
+    --lr 3e-4 \
+    --epochs 100
+```
+
+# Test
+
+```sh
+$ python main.py \
+    --mode "test" \
+    --model "vit-base" \
+    --patch_size 8 \
+    --model_checkpoint "./checkpoints/vit_base.ckpt"
+```
