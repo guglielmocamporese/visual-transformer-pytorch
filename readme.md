@@ -5,6 +5,7 @@ ongoing...
 ## Usage
 
 ```python
+# Imports
 import torch
 from models.vit import ViT
 
