@@ -5,6 +5,8 @@
  
  [![arXiv](https://img.shields.io/badge/arXiv-2010.1192-red)](https://arxiv.org/abs/2010.1192)
  
+ If you use the code of this repo and you find this project useful, please consider to give a star ⭐!
+ 
  ![alt text](vit.gif "model_diagram")
  
 ## Usage
